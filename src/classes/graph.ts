@@ -2,8 +2,11 @@ import { node } from "./node";
 
 class graph {
   time = 0;
+  matrix: number[][];
+
   constructor(public nodes: node[]) {
     this.nodes = nodes;
+    this.matrix = [];
   }
 
   addNode(parentNode: string, childNode: string) {
@@ -59,6 +62,100 @@ class graph {
           node.children.map((node) => node.id)
       );
     });
+  }
+
+  getAdjacencyMatrix() {
+    this.matrix = [];
+
+    this.nodes.forEach((node) => {
+      const row: number[] = [];
+      this.nodes.forEach((node2) => {
+        if (node.hasChild(node2)) {
+          row.push(1);
+        } else {
+          row.push(0);
+        }
+      });
+      this.matrix.push(row);
+    });
+  }
+
+  printAdjacencyMatrix() {
+    this.getAdjacencyMatrix();
+
+    let str = "  ";
+
+    this.nodes.forEach((node) => {
+      str += node.id + " ";
+    });
+
+    console.log(str);
+
+    this.matrix.forEach((row, index) => {
+      str = this.nodes[index].id + " ";
+      row.forEach((col) => {
+        str += col + " ";
+      });
+      console.log(str);
+    });
+  }
+
+  isReflexive() {
+    this.getAdjacencyMatrix();
+
+    for (let i = 0; i < this.matrix.length; i++) {
+      if (this.matrix[i][i] !== 1) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  isSymmetric() {
+    this.getAdjacencyMatrix();
+
+    for (let i = 0; i < this.matrix.length; i++) {
+      for (let j = 0; j < this.matrix.length; j++) {
+        if (this.matrix[i][j] !== this.matrix[j][i]) {
+          return false;
+        }
+      }
+    }
+
+    return true;
+  }
+
+  isAssymetric() {
+    this.getAdjacencyMatrix();
+
+    for (let i = 0; i < this.matrix.length; i++) {
+      for (let j = 0; j < this.matrix.length; j++) {
+        if (i !== j && this.matrix[i][j] === this.matrix[j][i]) {
+          return false;
+        } else if (i === j) {
+          if (this.matrix[i][j] !== 0) {
+            return false;
+          }
+        }
+      }
+    }
+
+    return true;
+  }
+
+  isAntiSymmetric() {
+    this.getAdjacencyMatrix();
+
+    for (let i = 0; i < this.matrix.length; i++) {
+      for (let j = 0; j < this.matrix.length; j++) {
+        if (i !== j && this.matrix[i][j] === 1 && this.matrix[j][i] === 1) {
+          return false;
+        }
+      }
+    }
+
+    return true;
   }
 }
 
