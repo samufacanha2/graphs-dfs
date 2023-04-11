@@ -2,16 +2,22 @@ import { node } from "./node";
 
 class graph {
   time = 0;
-  matrix: number[][];
+  matrix: number[][] = [];
+  nodes: node[] = [];
 
-  constructor(public nodes: node[]) {
-    this.nodes = nodes;
-    this.matrix = [];
-  }
+  constructor() {}
 
   addNode(parentNode: string, childNode: string) {
-    const parent = this.nodes.find((node) => node.id === parentNode);
-    const child = this.nodes.find((node) => node.id === childNode);
+    let parent = this.nodes.find((node) => node.id === parentNode);
+    if (!parent) {
+      parent = new node(parentNode);
+      this.nodes.push(parent);
+    }
+    let child = this.nodes.find((node) => node.id === childNode);
+    if (!child) {
+      child = new node(childNode);
+      this.nodes.push(child);
+    }
 
     if (parent && child) {
       parent.addChild(child);
@@ -62,6 +68,18 @@ class graph {
           node.children.map((node) => node.id)
       );
     });
+  }
+
+  ClosingTimePrint() {
+    this.DFSPrint();
+
+    const nodeList = this.nodes;
+
+    console.log(
+      `Sort by Closing Time: ${nodeList
+        .sort((a, b) => a.finishTime - b.finishTime)
+        .map((node) => node.id)}`
+    );
   }
 
   getAdjacencyMatrix() {
